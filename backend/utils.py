@@ -9,8 +9,8 @@ from typing import List, Callable, Any, Coroutine, TypeVar, Tuple, Optional
 # Standard library logger
 logger = logging.getLogger("agentic_system")
 logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
+handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
