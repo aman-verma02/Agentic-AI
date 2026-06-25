@@ -89,10 +89,16 @@ class BaseAgent:
     async def _simulate_llm_stream(
         self,
         prompt: str,
-        on_token: Callable[[str], Coroutine[Any, Any, None]]
+        system_instruction: Optional[str] = None,
+        on_token: Optional[Callable[[str], Coroutine[Any, Any, None]]] = None
     ) -> str:
         
         """Simulates LLM response generation with realistic delay and word-by-word streaming."""
+
+        if on_token is None:
+            async def _noop_token(_token: str) -> None:
+                return None
+            on_token = _noop_token
 
         response_text = self._generate_simulated_response(prompt)
         words = response_text.split(" ")
