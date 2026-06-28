@@ -1,96 +1,113 @@
 # Agentic AI Orchestration System
 
-A premium, highly interactive dashboard and asynchronous orchestration engine that accepts complex, multi-part prompts, decomposes them into structured execution steps, routes tasks to specialized agents (Retriever, Analyzer, Writer), and performs manual batching and parallel execution—all with visible real-time token streaming and forced error injection.
+A lightweight full-stack demo for orchestrating a multi-agent pipeline with a live dashboard. The app accepts a complex task, decomposes it into execution stages, runs retriever/analyzer/writer agents, streams progress over WebSockets, and shows the final markdown output in the browser.
 
-## 🚀 Key Features
+## ✨ What the app does
 
-- **Dynamic Task Decomposition**: Leverages an LLM planner to break complex prompts down into an ordered series of tasks.
-- **Specialized Multi-Agent Routing**: Automatically routes tasks to the `Retriever` (information collection), `Analyzer` (processing and structuring), or `Writer` (final synthesis and formatting).
-- **Manual Batching & Concurrency**: Groups list-based operations (e.g., retrieving 10 URLs, analyzing 6 datasets) into batch chunks of size `N`, running them concurrently using standard Python `asyncio.gather` with rate-limiting, and aggregating results without relying on opaque framework wrappers.
-- **Token-by-Token Streaming**: Watch agents think and generate responses in real-time on a slick dark-themed terminal-like web interface.
-- **Robust Error Recovery & Failure Injection**: Interactively test fault-tolerance mechanisms! Use the frontend panel to inject API timeouts, rate limits, or validation errors, and watch agents trigger exponential backoffs, retries, and fallback pipelines.
-- **Dual Mode (Zero-Config / Real LLM)**: 
-  - **Zero-Config/Mock Mode**: Works out of the box with simulated high-fidelity responses (perfect for evaluating the UI and execution pipeline without setting up API keys).
-  - **Production Mode**: Connects to official OpenAI or Gemini APIs simply by specifying keys in a `.env` file.
+- Accepts a complex prompt from the UI.
+- Decomposes the task into a structured pipeline.
+- Runs specialized agents for retrieval, analysis, and writing.
+- Streams progress and token output in real time.
+- Supports selective failure injection to test retries and human-in-the-loop behavior.
+- Works out of the box in mock mode with no API keys required.
 
----
+## 🧰 Tech stack
 
-## 🛠️ Tech Stack
+- Backend: FastAPI, Python asyncio, WebSockets, Pydantic
+- Frontend: React + Vite
+- Styling: custom CSS with a bright, modern interface
 
-- **Backend**: FastAPI, Python Asyncio, WebSockets, Pydantic, HTTPX.
-- **Frontend**: Premium HTML5, CSS3 (Glassmorphic dark-theme, CSS Variables, CSS Grid, Micro-animations), Vanilla JavaScript.
-- **Dependencies**: Light, minimal, and fully documented (no heavy/black-box frameworks like LangChain, LangGraph, or CrewAI).
-
----
-
-## 💻 Quick Start
+## ▶️ Run locally
 
 ### 1. Prerequisites
-Ensure you have **Python 3.10+** installed on your system.
 
-### 2. Install Dependencies
-In the root directory, run:
+- Python 3.9+
+- Node.js 18+
+- npm
+
+### 2. Create and activate the Python environment
+
 ```bash
+cd /Users/amanverma/My PC/Coding/Github/Agentic-AI
+python3 -m venv myenv
+source myenv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Environment Setup (Optional)
-If you wish to run with real LLM providers, copy `.env.example` to `.env` and fill in your keys:
+### 3. Start the backend
+
 ```bash
-cp .env.example .env
+cd /Users/amanverma/My PC/Coding/Github/Agentic-AI
+source myenv/bin/activate
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
-Inside `.env`:
-```env
-OPENAI_API_KEY=your-openai-api-key
-GEMINI_API_KEY=your-gemini-api-key
-LLM_PROVIDER=mock  # Set to 'openai' or 'gemini' to use actual LLMs
-```
-*Note: If no `.env` file is present or `LLM_PROVIDER` is set to `mock`, the system will use the high-fidelity Mock simulator, providing pre-written realistic agent paths for demonstration.*
 
-### 4. Run the Application
-Start the FastAPI server:
+The backend serves the app and exposes the WebSocket endpoint at:
+
+- http://127.0.0.1:8000/
+- ws://127.0.0.1:8000/ws
+
+### 4. Start the frontend
+
+In a second terminal:
+
 ```bash
-python -m backend.main
+cd /Users/amanverma/My PC/Coding/Github/Agentic-AI/frontend
+npm install
+npm run dev -- --host 127.0.0.1 --port 5173
 ```
-Or with auto-reload:
+
+Open:
+
+- http://127.0.0.1:5173/
+
+### 5. Test the app
+
+- Enter a task in the prompt box.
+- Click Launch Agent Pipeline.
+- Watch the timeline, token stream, logs, and final output update.
+
+## 🧪 Run tests
+
 ```bash
-uvicorn backend.main:app --reload
+cd /Users/amanverma/My PC/Coding/Github/Agentic-AI
+source myenv/bin/activate
+pytest -q backend/tests/test_agents.py
 ```
 
-Open your browser and navigate to:
-👉 **[http://localhost:8000](http://localhost:8000)**
+## 📁 Project structure
 
----
-
-## 📁 Repository Structure
-
-```
-.
-├── backend/
-│   ├── __init__.py
-│   ├── main.py            # FastAPI WebSocket server & static file serving
-│   ├── orchestrator.py    # Main pipeline orchestrator & error handler
-│   ├── agents.py          # Specialized agent implementations (Retriever, Analyzer, Writer)
-│   ├── utils.py           # Concurrency, exponential backoff, rate limiting & logging
-│   └── models.py          # Strict Pydantic types for steps, tasks & communication
-├── frontend/
-│   ├── index.html         # Premium dark-theme layout
-│   ├── style.css          # Glassmorphic dashboard styles
-│   └── app.js             # WebSocket handler & execution timeline rendering
-├── docs/
-│   ├── system_design.md   # Architectural details & data flow diagrams
-│   └── post_mortem.md     # Production trade-offs & scaling strategies
-├── .env.example           # Example environment variables
-├── requirements.txt       # Project python dependencies
-└── README.md              # Project documentation
+```text
+backend/
+  agents.py
+  main.py
+  models.py
+  orchestrator.py
+  utils.py
+frontend/
+  src/
+    App.jsx
+    components/
+    index.css
+    main.jsx
+  package.json
+  vite.config.js
 ```
 
----
+## 🔧 Optional: use real LLMs
 
-## 🧪 Running Automated Tests
+If you want to use a real provider instead of the built-in mock mode, set environment variables before starting the backend:
 
-To verify batching, retries, and orchestrator pipelines:
 ```bash
-pytest
+export LLM_PROVIDER=openai
+export OPENAI_API_KEY=your-key
 ```
-*(Make sure to run `pip install pytest` if you want to run the test suite).*
+
+Or with Gemini:
+
+```bash
+export LLM_PROVIDER=gemini
+export GEMINI_API_KEY=your-key
+```
+
+If no provider is configured, the app falls back to the simulator automatically.
