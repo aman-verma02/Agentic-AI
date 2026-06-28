@@ -4,9 +4,12 @@
 import React from 'react';
 
 const TEMPLATES = {
-  quantum: 'Research the history of quantum computing, compile a summary of key milestones, and write a blog post targeted at high school students.',
-  react: 'Conduct a security audit of a React web application, summarize critical vulnerabilities (like XSS and CSRF), and write an executive summary with remediation steps for the CTO.',
-  evtol: 'Perform a market research audit of electric vertical takeoff and landing (eVTOL) aircraft companies, compile financial/technological milestones, and write an investment thesis report.',
+  math: "Solve the given math problem step by step and explain the final answer in simple language.",
+
+  science: "Read the science topic, summarize the key points, and provide three important facts.",
+
+  programming: "Explain the given programming concept, provide a simple example, and list common mistakes.",
+
 };
 
 export default function Sidebar({
@@ -36,8 +39,8 @@ export default function Sidebar({
       <div className="brand">
         <i className="fa-solid fa-microchip-ai logo-icon"></i>
         <div className="brand-text">
-          <h1>Antigravity</h1>
-          <span>Orchestrator v1.0</span>
+          <h1>AI AGENT</h1>
+          <span>WORKSPACE</span>
         </div>
       </div>
 
@@ -62,24 +65,24 @@ export default function Sidebar({
           <div className="templates-list">
             <button
               className="template-btn"
-              onClick={() => fillTemplate('quantum')}
+              onClick={() => fillTemplate('math')}
               disabled={isRunning}
             >
-              <i className="fa-solid fa-atom"></i> Quantum History
+              <i className="fa-solid fa-atom"></i> Math Template
             </button>
             <button
               className="template-btn"
-              onClick={() => fillTemplate('react')}
+              onClick={() => fillTemplate('science')}
               disabled={isRunning}
             >
-              <i className="fa-solid fa-shield-halved"></i> React Security
+              <i className="fa-solid fa-shield-halved"></i> Science Template
             </button>
             <button
               className="template-btn"
-              onClick={() => fillTemplate('evtol')}
+              onClick={() => fillTemplate('programming')}
               disabled={isRunning}
             >
-              <i className="fa-solid fa-plane-slant"></i> eVTOL Investment
+              <i className="fa-solid fa-plane-slant"></i> Programming Templa
             </button>
           </div>
         </div>
